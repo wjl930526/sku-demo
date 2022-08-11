@@ -103,11 +103,11 @@ export class PathFinder {
           if (isAdd) {
             if (li[j]) {
               light[i][j] = this._checkItem(maps[i][j], selected);
-              this.count++;
+              // this.count++;
             }
           } else {
             light[i][j] = this._checkItem(maps[i][j], selected);
-            this.count++;
+            // this.count++;
           }
         }
       }
@@ -127,7 +127,7 @@ export class PathFinder {
     // 拿到已经选中规格集合*此规格集合值
     // 可选 SKU 集合反除，查询是否可选
     for (let i = 0; i < openWay.length; i++) {
-      this.count++;
+      // this.count++;
       if (openWay[i] % val === 0) {
         return 1;
       }
@@ -151,8 +151,6 @@ export class PathFinder {
         const s = selected[j];
         // xpath表示同一行，当已经被选择的和当前检测的项目再同一行的时候
         // 需要忽略。
-        // 必须选择了 [1, 2],检测的项目是[1, 3]，不可能存在[1, 2]和[1, 3]
-        // 的组合，他们在同一行
         if (_way[s][0] !== xpath) {
           ret *= s;
           retArr.push(s);

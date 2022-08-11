@@ -54,7 +54,7 @@ export class PathFinder {
     this.maps = maps;
     this.openWay = openWay;
     this._way = {};
-    this.light = []; // 存放路径 1表示未选中，2表示已选中
+    this.light = []; // 存放路径 1表示可选中，2表示已选，0为不可选
     this.selected = [];
     this.init();
   }
@@ -79,10 +79,10 @@ export class PathFinder {
     // 得到每个可操作的 SKU 质数的集合
     for (let i = 0; i < this.openWay.length; i++) {
       // eslint-disable-next-line no-eval
-      // this.openWay[i] = eval(this.openWay[i].join('*'));
+      this.openWay[i] = eval(this.openWay[i].join('*'));
       // eval不被推荐，通常比其他替代方法更慢，因为它必须调用 JS 解释器；
       // 使用与调用者相同的权限执行代码，容易被攻击
-      this.openWay[i] = this.openWay[i].reduce((pre,cur) => pre * cur, 1)
+      // this.openWay[i] = this.openWay[i].reduce((pre,cur) => pre * cur, 1)
     }
     // return 初始化得到规格位置，规格默认可选处理，可选 SKU 的规格对应的质数合集
     this._check();
@@ -106,11 +106,11 @@ export class PathFinder {
           if (isAdd) {
             if (li[j]) {
               light[i][j] = this._checkItem(maps[i][j], selected);
-              this.count++;
+              // this.count++;
             }
           } else {
             light[i][j] = this._checkItem(maps[i][j], selected);
-            this.count++;
+            // this.count++;
           }
         }
       }
@@ -130,7 +130,7 @@ export class PathFinder {
     // 拿到已经选中规格集合*此规格集合值
     // 可选 SKU 集合反除，查询是否可选
     for (let i = 0; i < openWay.length; i++) {
-      this.count++;
+      // this.count++;
       if (openWay[i] % val === 0) {
         return 1;
       }
@@ -154,8 +154,6 @@ export class PathFinder {
         const s = selected[j];
         // xpath表示同一行，当已经被选择的和当前检测的项目再同一行的时候
         // 需要忽略。
-        // 必须选择了 [1, 2],检测的项目是[1, 3]，不可能存在[1, 2]和[1, 3]
-        // 的组合，他们在同一行
         if (_way[s][0] !== xpath) {
           ret *= s;
           retArr.push(s);

@@ -13,7 +13,7 @@ export default class Demo extends Component {
 
     ], // 规格
     selected: [], // 已经选中的规格
-    unDisabled: [], // 可选规格
+    canSelect: [], // 可选规格（不可选的规格对应的质数将被重置为0）
     canUseSku: [], // 可用sku
     valueInLabel: {}, // 质数，规格枚举值
   };
@@ -42,6 +42,8 @@ export default class Demo extends Component {
     const sku = descartes(type).map((item) => {
       return {
         // 随机库存内容
+        // stock: item[0] == "裤子" && item[1] == "白色" ? 1 : 0,
+        // stock: item[0] == "裤子" && item[1] == "黑色" && item[2] == "S" &&item[3] == "男款" ? 1 : 0,
         stock: Math.floor(Math.random() * 10) > 5 ? 0 : 1,
         // 规格名
         skuName: item,
@@ -53,12 +55,12 @@ export default class Demo extends Component {
     const canUseSku = sku.filter(item => item.stock);
     // 初始化规格展示内容
     this.pathFinder = new PathFinder(way, canUseSku.map(item => item.skuPrime));
-    // 获取不可选规格内容
-    const unDisabled = this.pathFinder.getWay().flat();
+    // 获取可选规格内容
+    const canSelect = this.pathFinder.getWay().flat();
 
     this.setState({
       canUseSku,
-      unDisabled,
+      canSelect,
       valueInLabel,
     });
   }
@@ -95,18 +97,18 @@ export default class Demo extends Component {
       selected.push(type);
     }
 
-    // 更新不可选规格
-    const unDisabled = this.pathFinder.getWay().flat();
+    // 更新可选规格
+    const canSelect = this.pathFinder.getWay().flat();
 
 
     this.setState({
       selected,
-      unDisabled,
+      canSelect,
     });
   }
 
   render() {
-    const { type, selected, unDisabled, canUseSku, valueInLabel } = this.state;
+    const { type, selected, canSelect, canUseSku, valueInLabel } = this.state;
 
     const typeBtns = type.map((item, index) => {
       return (
@@ -116,7 +118,7 @@ export default class Demo extends Component {
               return (
                 <Button style={{ margin: '0 10px' }} 
                   type={selected.includes(btn) ? 'primary' : ''}
-                  disabled={!unDisabled.includes(valueInLabel[btn])}
+                  disabled={!canSelect.includes(valueInLabel[btn])}
                   onClick={() => {
                     this.onClickSelType(btn, valueInLabel[btn], index);
                   }}
